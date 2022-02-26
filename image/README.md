@@ -1,0 +1,1 @@
+This folder contains the OCI compliant image
