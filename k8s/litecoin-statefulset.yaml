@@ -1,0 +1,79 @@
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: litecoin
+  namespace: litecoin
+  labels:
+    name: litecoin
+spec:
+  selector:
+    matchLabels:
+      app: litecoin
+  serviceName: "litecoin"
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: litecoin
+    spec:
+      terminationGracePeriodSeconds: 20
+      # Blow away the log file from persistent storage before starting the main container
+      initContainers:
+        - name: cleaner
+          image: dannyeb/litecoin@sha256:d377697dbf1a4143af433946c15beacd5499026f9a0224f561a544f4c1a2fa1f
+          command:
+            - rm
+            - -f
+            - /home/litecoin/.litecoin/debug.log
+          volumeMounts:
+            - name: litecoin-storage
+              mountPath: ~/.litecoin
+      containers:
+        - name: litecoin
+          image: dannyeb/litecoin@sha256:d377697dbf1a4143af433946c15beacd5499026f9a0224f561a544f4c1a2fa1f
+          securityContext:
+            allowPrivilegeEscalation: false
+          ports:
+            - containerPort: 9332
+              name: rcp
+            - containerPort: 9333
+              name: listener
+          volumeMounts:
+            - name: litecoin-storage
+              mountPath: ~/.litecoin
+          readinessProbe:
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            exec:
+              command:
+               # readiness implemented as grep, tr, awk
+               #- /home/litecoin/readiness.sh
+               # same readiness implemented as python
+                - python3
+                - /home/litecoin/readiness.py
+                - --log
+                - /home/litecoin/.litecoin/debug.log
+          livenessProbe:
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            tcpSocket:
+              port: listener
+          resources:
+            requests:
+              memory: 4G
+              cpu: 500m
+            limits:
+              memory: 16G
+              cpu: 2
+              # nvidia.com/gpu: 1 # requesting 1 GPU since CPUs are terrible for mining
+  volumeClaimTemplates:
+    - metadata:
+        name: litecoin-storage
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        # Using Docker Desktops Kubernetes so storage class is host path
+        storageClassName: "hostpath"
+        resources:
+          requests:
+            storage: 1Gi

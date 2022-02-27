@@ -1,0 +1,1 @@
+This folder contains k8s manifests for deployment
