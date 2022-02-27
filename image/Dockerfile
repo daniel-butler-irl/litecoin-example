@@ -12,6 +12,8 @@ ARG FINAL_IMAGE="${CONTAINER_REGISTRY}${FINAL_IMAGE_BASE}:${FINAL_IMAGE_BASE_VER
 
 ARG LITECOIN_VERSION="0.18.1"
 
+# Ignore DL3006 hadoint is confused by this syntax
+# hadolint ignore=DL3006
 FROM ${BUILD_IMAGE} as build-image
 ARG LITECOIN_VERSION
 
@@ -36,7 +38,8 @@ RUN set -x \
     && echo "TODO: Implement GPG Verification https://download.litecoin.org/README-HOWTO-GPG-VERIFY-TEAM-MEMBERS-KEY.txt"
 
 
-
+# Ignore DL3006 hadoint is confused by this syntax
+# hadolint ignore=DL3006
 FROM  ${FINAL_IMAGE} as final-image
 
 ARG LITECOIN_VERSION
