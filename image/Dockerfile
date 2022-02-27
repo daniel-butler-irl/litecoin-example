@@ -32,7 +32,6 @@ RUN set -x \
     && yum clean all \
     && mkdir /litecoin; cd /litecoin \
     && curl -O "https://download.litecoin.org/litecoin-${LITECOIN_VERSION}/linux/litecoin-${LITECOIN_VERSION}-x86_64-linux-gnu.tar.gz" \
-    && curl -O "https://download.litecoin.org/litecoin-${LITECOIN_VERSION}/linux/litecoin-${LITECOIN_VERSION}-x86_64-linux-gnu.tar.gz.asc" \
     && sha256sum -c /CHECKSUMS 2>&1 | grep OK \
     && tar -xzvf "litecoin-${LITECOIN_VERSION}-x86_64-linux-gnu.tar.gz" \
     && echo "TODO: Implement GPG Verification https://download.litecoin.org/README-HOWTO-GPG-VERIFY-TEAM-MEMBERS-KEY.txt"
@@ -49,12 +48,13 @@ ENV LITECOIN_PERSISTANT_DATA="${HOME}/.litecoin"
 
 RUN set -x \
     && microdnf upgrade -y \
-    && microdnf install shadow-utils -y  \
+    && microdnf install shadow-utils python3 -y  \
     && microdnf clean all  \
     && groupadd --gid 1000 --system "${GROUP}" \
     && useradd --uid 1000 --system --gid "${USER}" --create-home "${USER}"
 
 COPY --from=build-image /litecoin/litecoin-${LITECOIN_VERSION}/bin /usr/local/bin
+COPY scripts/ /home/${USER}
 COPY entrypoint.sh /
 
 # This is where a persistant volume will mount

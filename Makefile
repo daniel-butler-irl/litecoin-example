@@ -21,14 +21,23 @@ push: docker-login
 	docker tag "${IMAGE}" "${REGISTRY}/${IMAGE}:$(BUILD_DATE)"
 	docker push "${REGISTRY}/${IMAGE}:$(BUILD_DATE)"
 
-test:
+test: build
 	@echo "Testing"
 	# Some basic tests
 	docker run --rm -i hadolint/hadolint < "${DOCKERFILE}"
 	docker run --rm -v "$$PWD:/mnt" koalaman/shellcheck:stable **/*.sh
-	docker scan "${IMAGE}" --exclude-base
+	# Its team dependent but I find monitors these days are quite large so default max line length of 80 is too short
+	docker run --rm -v "$$PWD:/yaml" sdesbure/yamllint yamllint -d "{extends: relaxed, rules: {line-length: {max: 120}}}"  **/*.yaml
+	docker run --rm -v  "$$PWD/k8s:/k8s" garethr/kubeval k8s/*.yaml
+	docker scan "${IMAGE}"
 
 run:
 	# Used for running locally
 	@echo "Run container"
 	docker run --rm -it --name litecoin litecoin
+
+deploy:
+	kubectl apply -f k8s
+
+destroy:
+	kubectl delete -f k8s
