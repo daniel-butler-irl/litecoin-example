@@ -26,6 +26,7 @@ test:
 	# Some basic tests
 	docker run --rm -i hadolint/hadolint < "${DOCKERFILE}"
 	docker run --rm -v "$$PWD:/mnt" koalaman/shellcheck:stable **/*.sh
+	docker scan "${IMAGE}" --exclude-base
 
 run:
 	# Used for running locally

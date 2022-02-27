@@ -5,10 +5,9 @@ ARG BUILD_IMAGE_BASE="ubi8/ubi"
 ARG BUILD_IMAGE_BASE_VERSION="8.5-226@sha256:cbc1e8cea8c78cfa1490c4f01b2be59d43ddbbad6987d938def1960f64bcd02c"
 ARG BUILD_IMAGE="${CONTAINER_REGISTRY}${BUILD_IMAGE_BASE}:${BUILD_IMAGE_BASE_VERSION}"
 # Alpine is a common minimal image, but Redhat's Universal Base image is better for production as it is more security focused
-# and will usually have security issues fixed quicker. Here I am using the larger UBI image instead of minimal to save time
-# the correct way is to use the minimal image and only install the required components needed to run your application.
-ARG FINAL_IMAGE_BASE="ubi8/ubi"
-ARG FINAL_IMAGE_BASE_VERSION="8.5-226@sha256:cbc1e8cea8c78cfa1490c4f01b2be59d43ddbbad6987d938def1960f64bcd02c"
+# and will usually have security issues fixed quicker. NOTE I am not using a premium subscription so there may be vulnerabilities in this image
+ARG FINAL_IMAGE_BASE="ubi8/ubi8-minimal"
+ARG FINAL_IMAGE_BASE_VERSION="8.5-230@sha256:3aa3f379a81013bd3264faa0af87d201cdaa5981050d78c567b48fdfd5b38bb8"
 ARG FINAL_IMAGE="${CONTAINER_REGISTRY}${FINAL_IMAGE_BASE}:${FINAL_IMAGE_BASE_VERSION}"
 
 ARG LITECOIN_VERSION="0.18.1"
@@ -26,6 +25,7 @@ WORKDIR "${HOME}"
 # you can leverage layer caching, but in production we disable caching to ensure everything is fully upto date.
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
+# Ignore DL3003 Use WORKDIR to switch to a directory as we do not care for the build image
 # hadolint ignore=DL3003
 RUN set -x \
     && yum upgrade -y \
@@ -37,7 +37,10 @@ RUN set -x \
     && tar -xzvf "litecoin-${LITECOIN_VERSION}-x86_64-linux-gnu.tar.gz" \
     && echo "TODO: Implement GPG Verification https://download.litecoin.org/README-HOWTO-GPG-VERIFY-TEAM-MEMBERS-KEY.txt"
 
+
+
 FROM  ${CONTAINER_REGISTRY}${FINAL_IMAGE_BASE}:${FINAL_IMAGE_BASE_VERSION} as final-image
+
 ARG LITECOIN_VERSION
 
 ENV USER="litecoin"
@@ -45,8 +48,9 @@ ENV GROUP="litecoin"
 ENV LITECOIN_PERSISTANT_DATA="${HOME}/.litecoin"
 
 RUN set -x \
-    && yum upgrade -y \
-    && yum clean all  \
+    && microdnf upgrade -y \
+    && microdnf install shadow-utils -y  \
+    && microdnf clean all  \
     && groupadd --gid 1000 --system "${GROUP}" \
     && useradd --uid 1000 --system --gid "${USER}" --create-home "${USER}"
 
