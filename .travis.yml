@@ -1,0 +1,17 @@
+language: python
+
+services:
+  - docker
+
+git:
+  depth: false
+
+script:
+  # Run tests
+  - make test
+
+deploy:
+  provider: script
+  script: make push
+  on:
+    branch: master
