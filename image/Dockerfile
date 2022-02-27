@@ -16,7 +16,6 @@ FROM ${CONTAINER_REGISTRY}${BUILD_IMAGE_BASE}:${BUILD_IMAGE_BASE_VERSION} as bui
 ARG LITECOIN_VERSION
 
 COPY CHECKSUMS /CHECKSUMS
-WORKDIR "${HOME}"
 
 # using an intermediate image for the
 # set -x to fail fast
