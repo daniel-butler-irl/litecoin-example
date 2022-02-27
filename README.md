@@ -1,4 +1,6 @@
 # litecoin-example
+[![Build Status](https://app.travis-ci.com/daniel-butler-irl/litecoin-example.svg?branch=main)](https://app.travis-ci.com/daniel-butler-irl/litecoin-example)
+
 Example of Packaging Litecoin For Kubernetes
 
 ## Structure
@@ -10,10 +12,8 @@ Example of Packaging Litecoin For Kubernetes
     - **image**  
       Contains the OCI compliant image containing Litecoin
         - *Dockerfile*
-    - **charts**  
-      Contains Helm charts for deployments
-        - **litecoin**  
-          The Litecoin helm chart
+    - **k8s**  
+      Contains Kubernetes manifests for deployments
     - **pipelines**  
       Contains pipeline as code for this project
 
