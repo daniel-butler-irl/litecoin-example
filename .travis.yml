@@ -1,10 +1,15 @@
 language: python
+
 services:
-- docker
+  - docker
+
 git:
   depth: false
+
 script:
-- make test
+  # Run tests
+  - make test
+
 deploy:
   provider: script
   script: make push
