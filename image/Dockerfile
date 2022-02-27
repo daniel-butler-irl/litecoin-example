@@ -6,17 +6,18 @@ ARG BUILD_IMAGE_BASE_VERSION="8.5-226@sha256:cbc1e8cea8c78cfa1490c4f01b2be59d43d
 ARG BUILD_IMAGE="${CONTAINER_REGISTRY}${BUILD_IMAGE_BASE}:${BUILD_IMAGE_BASE_VERSION}"
 # Alpine is a common minimal image, but Redhat's Universal Base image is better for production as it is more security focused
 # and will usually have security issues fixed quicker. NOTE I am not using a premium subscription so there may be vulnerabilities in this image
-ARG FINAL_IMAGE_BASE="ubi8/ubi8-minimal"
+ARG FINAL_IMAGE_BASE="ubi8/ubi-minimal"
 ARG FINAL_IMAGE_BASE_VERSION="8.5-230@sha256:3aa3f379a81013bd3264faa0af87d201cdaa5981050d78c567b48fdfd5b38bb8"
 ARG FINAL_IMAGE="${CONTAINER_REGISTRY}${FINAL_IMAGE_BASE}:${FINAL_IMAGE_BASE_VERSION}"
 
 ARG LITECOIN_VERSION="0.18.1"
 
-FROM ${CONTAINER_REGISTRY}${BUILD_IMAGE_BASE}:${BUILD_IMAGE_BASE_VERSION} as build-image
+# Ignore DL3006 hadoint is confused by this syntax
+# hadolint ignore=DL3006
+FROM ${BUILD_IMAGE} as build-image
 ARG LITECOIN_VERSION
 
 COPY CHECKSUMS /CHECKSUMS
-WORKDIR "${HOME}"
 
 # using an intermediate image for the
 # set -x to fail fast
@@ -37,8 +38,9 @@ RUN set -x \
     && echo "TODO: Implement GPG Verification https://download.litecoin.org/README-HOWTO-GPG-VERIFY-TEAM-MEMBERS-KEY.txt"
 
 
-
-FROM  ${CONTAINER_REGISTRY}${FINAL_IMAGE_BASE}:${FINAL_IMAGE_BASE_VERSION} as final-image
+# Ignore DL3006 hadoint is confused by this syntax
+# hadolint ignore=DL3006
+FROM  ${FINAL_IMAGE} as final-image
 
 ARG LITECOIN_VERSION
 
