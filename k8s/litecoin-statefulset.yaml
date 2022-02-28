@@ -12,6 +12,13 @@ spec:
       app: litecoin
   serviceName: "litecoin"
   replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      # use percentages so it scales if you change the replicas
+      maxSurge: 30%
+      maxUnavailable: 10%
+    revisionHistoryLimit: 4
   template:
     metadata:
       labels:

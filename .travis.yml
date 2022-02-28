@@ -12,6 +12,11 @@ script:
 
 deploy:
   provider: script
+  # For this example my deployment is just deploying the image to a container registry (unsigned)
+  # I would not use Travis for a proper deployment pipeline, except maybe to deploy to a dev environment.
+  # A complex deployment pipeline would involve deploying to some kind of staging environment and reaching some test criteria
+  # before moving to production, along with auditing and additional compliance needs.
+  # For this simple example I could put > kubectl apply -f k8s/
   script: make push
   on:
     branch: main
