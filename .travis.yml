@@ -9,6 +9,7 @@ git:
 script:
   # Run tests
   - make test
+  - make build
 
 deploy:
   provider: script
