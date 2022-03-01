@@ -3,6 +3,7 @@ locals {
 }
 
 # A role, with no permissions, which can be assumed by users within the same account
+# Roles in IBM Cloud must be attached to a service
 resource "ibm_iam_custom_role" "toolchain-viewer-role" {
 #  Here as a quick hack to match the requirement for the name to start with a capital letter
   name         = title("${local.prefix}toolchainviewer")
