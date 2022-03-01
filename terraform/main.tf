@@ -4,8 +4,8 @@ locals {
 
 # A role, with no permissions, which can be assumed by users within the same account
 resource "ibm_iam_custom_role" "toolchain-viewer-role" {
-#  H is added here as a quick hack to match the requirement for the name to start with a capital letter
-  name         = "H${local.prefix}toolchainviewer"
+#  Here as a quick hack to match the requirement for the name to start with a capital letter
+  name         = title("${local.prefix}toolchainviewer")
   display_name = "Toolchain Viewer"
   description  = "Gives view access to list Toolchain instances"
   service = "toolchain"
