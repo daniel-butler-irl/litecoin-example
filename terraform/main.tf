@@ -22,8 +22,7 @@ resource "ibm_iam_access_group" "toolchain-viewer-group" {
 # A policy, allowing users / entities to assume the above role
 resource "ibm_iam_access_group_policy" "toolchain-viewer-policy" {
   access_group_id = ibm_iam_access_group.toolchain-viewer-group.id
-#  Custom Roles not supported by the IBM Cloud Provider https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/iam_access_group_policy#roles
-  roles           = ["Viewer"]
+  roles           = [ibm_iam_custom_role.toolchain-viewer-role.display_name]
   resources {
     service         = "toolchain"
   }
