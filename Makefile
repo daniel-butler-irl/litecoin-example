@@ -37,6 +37,10 @@ test:
 	docker run --rm -v "$$PWD/terraform:/data" -t ghcr.io/terraform-linters/tflint
 	docker run --rm -it -v "$$PWD/terraform:/src" aquasec/tfsec /src
 
+docs:
+	@echo "Generating Docs"
+	docker run --rm --volume "$$PWD/terraform:/terraform-docs" quay.io/terraform-docs/terraform-docs:0.16.0 markdown /terraform-docs > terraform/README.md
+
 run:
 	# Used for running locally
 	@echo "Run container"
