@@ -37,7 +37,8 @@ Some of my decisions where made to show of concepts and not necessarily always t
 ### image
 OCI compliant image. Multistage build is used so, we do not ship any build tools or other unnecessary artifacts in the final 
 image. RedHat's UBI image was chosen as it is more security focused than say an alpine image. Note at time of building since I am
-not using a RedHat subscription there is at least 1 High severity vulnerability that has not yet been pushed to the free public repo.
+not using a RedHat subscription there is at least 1 High severity vulnerability that has not yet been pushed to the free public repo. 
+(UPDATE: It seems Docker scan is a bit aggressive. Trivy and IBM Clould Vulnrability Advisor mark this as a Medium level vulnerability)
 If I had more time I also would have implemented the GPG Verification. In a production environment I would also not directly pull
 from the public internet, instead use Artifactory or similar to mirror public sources in order to help against supply chain attacks.
 
